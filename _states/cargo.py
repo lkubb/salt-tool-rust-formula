@@ -148,7 +148,7 @@ def latest(name, locked=True, root=None, user=None):
     return ret
 
 
-def absent(name, root, user=None):
+def absent(name, root=None, user=None):
     """
     Makes sure cargo installation of program is absent.
 

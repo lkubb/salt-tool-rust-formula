@@ -8,3 +8,6 @@ include:
 {%- if rust.users | selectattr('dotconfig', 'defined') | selectattr('dotconfig') %}
   - .configsync
 {%- endif %}
+{%- if rust.users | selectattr('rust.crates', 'defined') %}
+  - .crates
+{%- endif %}

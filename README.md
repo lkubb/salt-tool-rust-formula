@@ -1,14 +1,14 @@
 # Rust Formula
-Sets up, configures and updates rust.
+Sets up, configures and updates Rust and Cargo.
 
 ## Usage
-Applying `tool-rust` will make sure `rust` is configured as specified.
+Applying `tool-rust` will make sure Cargo is configured as specified. This formula mostly exists for the `cargo` state module.
 
 ### Execution module and state
-This formula provides a custom execution module and state to manage packages installed with rust. The functions are self-explanatory, please see the source code for comments. Currently, the following states are supported:
-* `rust.installed(name, user)`
-* `rust.absent(name, user)`
-* `rust.uptodate(name, user)`
+This formula provides a custom execution module and state to manage packages installed with Cargo. The functions are self-explanatory, please see the source code for comments. Currently, the following states are supported:
+* `cargo.installed(name, version=None, locked=True, root=None, force=False, git=None, path=None, branch=None, tag=None, rev=None, user=None)`
+* `cargo.absent(name, root=None, user=None)`
+* `cargo.latest(name, locked=True, root=None, user=None)`
 
 ## Configuration
 ### Pillar
@@ -54,23 +54,29 @@ user:
   xdg: true                         # force xdg dirs
   dotconfig: true                   # sync this user's config from a dotfiles repo available as salt://dotconfig/<user>/rust or salt://dotconfig/rust
   persistenv: '.config/zsh/zshenv'  # persist env vars specified in salt to this file (will be appended to file relative to $HOME)
-  rchook: '.config/zsh/zshrc'       # add runcom hooks to this file (will be appended to file relative to $HOME)
   rust:
-    someconf: someval
+    # crates that should be installed for this user
+    crates:
+      - broot
+      - du-dust
 ```
 
 #### Formula-specific
 ```yaml
 tool:
   rust:
-    defaults:                           # default formula configuration for all users
-      someconf: someval
+    update_auto: true               # keep the packages updated to their latest version on subsequent runs (for Linux, brew does that anyways)
+    defaults:                       # default formula configuration for all users
+      # default crates that should be installed with cargo
+      # (for further config, use cargo.installed in your own state)
+      crates:
+        - flavours
 ```
 
 ### Dotfiles
-`tool-rust.configsync` will recursively apply templates from 
+`tool-rust.configsync` will sync `config.toml` from
 
-- `salt://dotconfig/<user>/rust` or
-- `salt://dotconfig/rust`
+- `salt://dotconfig/<user>/cargo` or
+- `salt://dotconfig/cargo`
 
-to the user's config dir for every user that has it enabled (see `user.dotconfig`). The target folder will not be cleaned by default (ie files in the target that are absent from the user's dotconfig will stay).
+to `${CARGO_HOME:-$HOME/.cargo}` for every user that has it enabled (see `user.dotconfig`).

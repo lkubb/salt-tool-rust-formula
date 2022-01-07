@@ -15,7 +15,7 @@
   {%- endif -%}
 {%- endfor -%}
 
-{%- do salt['defaults.merge'](users, rust.get('users', {})) -%}
+{%- do salt['defaults.merge'](users, rust.get('users', {}), merge_lists=True) -%} {#- merge, not replace default crates with user-specific ones -#}
 
 {#- update all user configuration for rust with its defaults -#}
 {%- do salt['defaults.update'](users, {'rust': rust.get('defaults', {})}) -%}
