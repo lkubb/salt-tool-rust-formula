@@ -1,6 +1,6 @@
 {%- from 'tool-rust/map.jinja' import rust -%}
 
-rust is installed:
+Rust is installed:
 {# Homebrew always installs latest, mac_brew_pkg does not support upgrading a single package #}
 {%- if rust.get('update_auto') and not grains['kernel'] == 'Darwin' %}
   pkg.latest:
@@ -9,7 +9,7 @@ rust is installed:
 {%- endif %}
     - name: {{ rust._package }}
 
-rust setup is completed:
+Rust setup is completed:
   test.nop:
     - name: rust setup has finished, this state exists for technical reasons.
     - require:
