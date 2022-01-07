@@ -1,0 +1,19 @@
+tool:
+  rust:
+    update_auto: true                   # keep the packages updated to their latest version on subsequent runs (for Linux, brew does that anyways)
+    defaults:                           # default formula configuration for all users
+      someconf: someval
+    users:
+      user:                             # user configuration can also be specified in tool:rust:users
+        persistenv: '.bash_profile'
+        rust:
+          someconf: someval
+
+  users:
+    user:
+      xdg: true                         # force xdg dirs
+      dotconfig: true                   # sync this user's config from a dotfiles repo available as salt://dotconfig/<user>/rust or salt://dotconfig/rust
+      persistenv: '.config/zsh/zshenv'  # persist env vars specified in salt to this file (will be appended to file relative to $HOME)
+      rchook: '.config/zsh/zshrc'       # add runcom hooks to this file (will be appended to file relative to $HOME)
+      rust:
+        someconf: someval
