@@ -19,11 +19,11 @@ def __virtual__():
 
 
 def _which(user=None):
-    if e := salt["cmd.run"]("command -v cargo", runas=user):
+    if e := __salt__["cmd.run"]("command -v cargo", runas=user):
         return e
     if salt.utils.platform.is_darwin():
         for f in ['/opt/homebrew/bin', '/usr/local/bin']:
-            if p := salt["cmd.run"]("test -s {}/cargo && echo {}/cargo".format(f, f) , runas=user):
+            if p := __salt__["cmd.run"]("test -s {}/cargo && echo {}/cargo".format(f, f) , runas=user):
                 return p
     raise CommandExecutionError("Could not find cargo executable.")
 
@@ -65,6 +65,7 @@ def is_latest(name, root=None, user=None):
     """
     if not is_installed(name, root, user):
         raise CommandExecutionError("{} is not installed with cargo for user {}.".format(name, user))
+
     return latest_version(name, user) == _list_installed(root, True, user)[name]
 
 
@@ -168,7 +169,7 @@ def remove(name, root=None, user=None):
         The username to uninstall the program for. Defaults to salt user.
 
     """
-    if not is_installed(name, user):
+    if not is_installed(name, root, user):
         raise CommandExecutionError("{} is not installed with cargo for user {}.".format(name, user))
     flags = []
     # if multiple versions of the same binary were installed, this uninstalls only the one in $root/bin
@@ -177,7 +178,7 @@ def remove(name, root=None, user=None):
 
     e = _which(user)
 
-    return not __salt__['cmd.retcode']("{} uninstall '{}' {}".format(e, name, flags), runas=user)
+    return not __salt__['cmd.retcode']("{} uninstall '{}' {}".format(e, name, ' '.join(flags)), runas=user)
 
 
 def upgrade(name, locked=True, root=None, user=None):
@@ -201,10 +202,10 @@ def upgrade(name, locked=True, root=None, user=None):
         The username to upgrade the program for. Defaults to salt user.
 
     """
-    if not is_installed(name, user):
+    if not is_installed(name, root, user):
         raise CommandExecutionError("{} is not installed with cargo for user {}.".format(name, user))
 
-    if is_latest(name, user):
+    if is_latest(name, root, user):
         raise CommandExecutionError("{} is already the latest version for user {}.".format(name, user))
 
     return install(name, locked, root, user=user)
@@ -231,7 +232,7 @@ def reinstall(name, locked=True, root=None, user=None):
         The username to reinstall the program for. Defaults to salt user.
 
     """
-    if not is_installed(name, user):
+    if not is_installed(name, root, user):
         raise CommandExecutionError("{} is not installed with cargo for user {}.".format(name, user))
 
     return install(name, locked, root, force=True, user=user)
@@ -240,16 +241,19 @@ def reinstall(name, locked=True, root=None, user=None):
 def _list_installed(root=None, versions=False, user=None):
     e = _which(user)
 
-    out = __salt__['cmd.run']("{} install --list".format(e), runas=user)
+    # run_all returns {'pid': int, 'retcode': int, 'stdout': str, 'stderr': str}
+    out = __salt__['cmd.run_stdout']("{} install --list".format(e), raise_err=True, runas=user)
 
     if out:
         return _parse(out, versions)
-    raise CommandExecutionError('Something went wrong while calling cargo.')
+    if versions:
+        return {}
+    return []
 
 
 def _parse(installed, versions=False):
     res = re.findall(r'(?m)^[^\s]..*:$', installed)
 
     if versions:
-        return {x.split(' ')[0]: x.split(' ')[1] for x in res}
+        return {x.split(' ')[0]: x.split(' ')[1][1:-1] for x in res}
     return [x.split(' ')[0] for x in res]
