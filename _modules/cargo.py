@@ -11,7 +11,7 @@ import re
 
 # log = logging.getLogger(__name__)
 
-__virtualname__ = "rust"
+__virtualname__ = "cargo"
 
 
 def __virtual__():
