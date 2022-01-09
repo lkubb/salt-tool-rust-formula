@@ -19,11 +19,11 @@ def __virtual__():
 
 
 def _which(user=None):
-    if e := __salt__["cmd.run"]("command -v cargo", runas=user):
+    if e := __salt__["cmd.run_stdout"]("command -v cargo", runas=user):
         return e
     if salt.utils.platform.is_darwin():
         for f in ['/opt/homebrew/bin', '/usr/local/bin']:
-            if p := __salt__["cmd.run"]("test -s {}/cargo && echo {}/cargo".format(f, f) , runas=user):
+            if p := __salt__["cmd.run_stdout"]("test -s {}/cargo && echo {}/cargo".format(f, f) , runas=user):
                 return p
     raise CommandExecutionError("Could not find cargo executable.")
 
@@ -82,7 +82,7 @@ def latest_version(name, user=None):
     """
     e = _which(user)
 
-    out = __salt__['cmd.run']("{} search {}".format(e, name), runas=user)
+    out = __salt__['cmd.run_stdout']("{} search {}".format(e, name), runas=user)
 
     # no multiline to use the first search result only
     return re.match(r'^[^\d]*([\d\.]*)', out).group(1)
