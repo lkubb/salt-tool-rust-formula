@@ -35,7 +35,7 @@ def installed(name, version=None, locked=True, root=None, force=False, git=None,
         If you want to install a specific version and are installing from
         crates.io (default), specify here. Currently, the program will
         NOT be reinstalled with the specified version if it is already
-        found. @TODO
+        found. @TODO latest or None for latest
 
     locked:
         Use the package's lockfile when pulling dependencies. Defaults to True.
@@ -67,6 +67,9 @@ def installed(name, version=None, locked=True, root=None, force=False, git=None,
 
     """
     ret = {"name": name, "result": True, "comment": "", "changes": {}}
+
+    if version == "latest":
+        version = None
 
     try:
         if __salt__["cargo.is_installed"](name, root, user):
