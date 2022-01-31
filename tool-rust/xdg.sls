@@ -18,7 +18,7 @@ Existing Cargo home is migrated for user '{{ user.name }}':
 Cargo uses XDG dirs during this salt run:
   environ.setenv:
     - value:
-        CARGO_HOME=: "{{ user.xdg.data }}/cargo"
+        CARGO_HOME: "{{ user.xdg.data }}/cargo"
         CARGO_INSTALL_ROOT: "{{ user.home }}/.local"
     - prereq_in:
       - Rust setup is completed
