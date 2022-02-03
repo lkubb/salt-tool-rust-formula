@@ -24,15 +24,24 @@ Cargo uses XDG dirs during this salt run:
       - Rust setup is completed
 
   {%- if user.get('persistenv') %}
+
+persistenv file for rust for user '{{ user.name }}' exists:
+  file.managed:
+    - name: {{ user.home }}/{{ user.persistenv }}
+    - user: {{ user.name }}
+    - group: {{ user.group }}
+    - mode: '0600'
+    - dir_mode: '0700'
+    - makedirs: true
+
 Cargo knows about XDG location for user '{{ user.name }}':
   file.append:
     - name: {{ user.home }}/{{ user.persistenv }}
     - text: |
         export CARGO_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/cargo"
         export CARGO_INSTALL_ROOT="$HOME/.local"
-    - user: {{ user.name }}
-    - group: {{ user.group }}
-    - mode: '0600'
+    - require:
+      - persistenv file for rust for user '{{ user.name }}' exists
     - prereq_in:
       - Rust setup is completed
   {%- endif %}
