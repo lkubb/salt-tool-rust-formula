@@ -137,7 +137,7 @@ def install(name, version=None, locked=True, root=None, force=False, git=None, p
     if locked:
         flags.append('--locked')
     if root:
-        flags.append('--root {}'.format(root))
+        flags.append('--root={}'.format(root))
     if force:
         flags.append('--force')
     if git:
