@@ -12,7 +12,7 @@ Existing Cargo home is migrated for user '{{ user.name }}':
     - onlyif:
       - test -d {{ user.home }}/.cargo
     - makedirs: true
-    - prereq_in:
+    - require_in:
       - Rust setup is completed
 
 Cargo uses XDG dirs during this salt run:
@@ -20,7 +20,7 @@ Cargo uses XDG dirs during this salt run:
     - value:
         CARGO_HOME: "{{ user.xdg.data }}/cargo"
         CARGO_INSTALL_ROOT: "{{ user.home }}/.local"
-    - prereq_in:
+    - require_in:
       - Rust setup is completed
 
   {%- if user.get('persistenv') %}
@@ -42,7 +42,7 @@ Cargo knows about XDG location for user '{{ user.name }}':
         export CARGO_INSTALL_ROOT="$HOME/.local"
     - require:
       - persistenv file for rust for user '{{ user.name }}' exists
-    - prereq_in:
+    - require_in:
       - Rust setup is completed
   {%- endif %}
 {%- endfor %}
