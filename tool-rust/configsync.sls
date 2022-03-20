@@ -8,7 +8,7 @@ Cargo configuration is synced for user '{{ user.name }}':
       - salt://dotconfig/{{ user.name }}/cargo/cargo.toml
       - salt://dotconfig/cargo/cargo.toml
     - context:
-        user: {{ user }}
+        user: {{ user | json }}
     - template: jinja
     - user: {{ user.name }}
     - group: {{ user.group }}
