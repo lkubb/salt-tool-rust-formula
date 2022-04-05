@@ -1,0 +1,51 @@
+{
+  "template": "https://github.com/lkubb/salt-tool-template-formula",
+  "commit": "64a90a1511c749ea1361df5de83d16a8f5e27ed5",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "_extensions": [
+        "local_extensions.YAMLDumper"
+      ],
+      "_jinja2_env_vars": {
+        "block_start_string": "{!",
+        "block_end_string": "!}",
+        "variable_start_string": "{=",
+        "variable_end_string": "=}",
+        "comment_start_string": "{@",
+        "comment_end_string": "@}"
+      },
+      "name": "Rust",
+      "abbr": "rust",
+      "abbr_pysafe": "rust",
+      "pkg": "rustup-init",
+      "modstate": "y",
+      "needs_repo": "n",
+      "has_service": "n",
+      "mac_library": "n",
+      "mac_cask": "n",
+      "has_xdg": "y",
+      "needs_xdg_help": "y",
+      "has_conffile_only": "n",
+      "default_confdir": ".cargo",
+      "default_confdir_mac": ".cargo",
+      "default_conffile": "config.toml",
+      "xdg_dirname": "cargo",
+      "xdg_conffile": "config.toml",
+      "has_configsync": "y",
+      "has_config_template": "n",
+      "has_tests": "y",
+      "git_username": "lkubb",
+      "_lookup": {},
+      "_settings": {},
+      "_usersettings": {
+        "crates": [
+          "broot",
+          "du-dust"
+        ]
+      },
+      "_template": "https://github.com/lkubb/salt-tool-template-formula"
+    }
+  },
+  "directory": null
+}

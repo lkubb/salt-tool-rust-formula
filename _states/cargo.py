@@ -18,15 +18,21 @@ def __virtual__():
     return __virtualname__
 
 
-def installed(name, version=None, locked=True, root=None, force=False, git=None, path=None, branch=None, tag=None, rev=None, user=None):
+def installed(
+    name,
+    version=None,
+    locked=True,
+    root=None,
+    force=False,
+    git=None,
+    path=None,
+    branch=None,
+    tag=None,
+    rev=None,
+    user=None,
+):
     """
     Makes sure rust binary is installed with cargo.
-
-    CLI Example:
-
-    .. code-block:: bash
-
-        salt '*' cargo.installed broot user=user
 
     name
         The name of the program to install, if not already installed.
@@ -75,12 +81,20 @@ def installed(name, version=None, locked=True, root=None, force=False, git=None,
         if __salt__["cargo.is_installed"](name, root, user):
             ret["comment"] = "Program is already installed with cargo."
         elif __opts__["test"]:
-            ret['result'] = None
-            ret['comment'] = "Program '{}' would have been installed for user '{}' in '{}'.".format(name, user, root)
-            ret["changes"] = {'installed': name}
-        elif __salt__["cargo.install"](name, version, locked, root, force, git, path, branch, tag, rev, user):
-            ret["comment"] = "Program '{}' was installed for user '{}' in '{}'.".format(name, user, root)
-            ret["changes"] = {'installed': name}
+            ret["result"] = None
+            ret[
+                "comment"
+            ] = "Program '{}' would have been installed for user '{}' in '{}'.".format(
+                name, user, root
+            )
+            ret["changes"] = {"installed": name}
+        elif __salt__["cargo.install"](
+            name, version, locked, root, force, git, path, branch, tag, rev, user
+        ):
+            ret["comment"] = "Program '{}' was installed for user '{}' in '{}'.".format(
+                name, user, root
+            )
+            ret["changes"] = {"installed": name}
         else:
             ret["result"] = False
             ret["comment"] = "Something went wrong while calling cargo."
@@ -95,12 +109,6 @@ def latest(name, locked=True, root=None, user=None):
     """
     Makes sure program is installed with cargo and is up to date. This works
     for installation from crates.io. For git/path sources, use installed(force=True)
-
-    CLI Example:
-
-    .. code-block:: bash
-
-        salt '*' cargo.latest broot user=user
 
     name
         The name of the program to upgrade.
@@ -121,24 +129,40 @@ def latest(name, locked=True, root=None, user=None):
     try:
         if __salt__["cargo.is_installed"](name, root, user):
             if __salt["cargo.is_latest"](name, root, user):
-                ret["comment"] = "Program '{}' is already at its latest version in '{}' from crates.io for user '{}'.".format(name, root, user)
+                ret[
+                    "comment"
+                ] = "Program '{}' is already at its latest version in '{}' from crates.io for user '{}'.".format(
+                    name, root, user
+                )
             elif __opts__["test"]:
-                ret['result'] = None
-                ret['comment'] = "Program '{}' would have been upgraded for user '{}'.".format(name, user)
-                ret["changes"] = {'installed': name}
+                ret["result"] = None
+                ret[
+                    "comment"
+                ] = "Program '{}' would have been upgraded for user '{}'.".format(
+                    name, user
+                )
+                ret["changes"] = {"installed": name}
             elif __salt__["cargo.upgrade"](name, locked, root, user):
-                ret["comment"] = "Program '{}' was upgraded for user '{}'.".format(name, user)
-                ret["changes"] = {'upgraded': name}
+                ret["comment"] = "Program '{}' was upgraded for user '{}'.".format(
+                    name, user
+                )
+                ret["changes"] = {"upgraded": name}
             else:
                 ret["result"] = False
                 ret["comment"] = "Something went wrong while calling mas."
-        elif __opts__['test']:
-            ret['result'] = None
-            ret['comment'] = "Program '{}' would have been installed for user '{}' in '{}'.".format(name, user, root)
-            ret["changes"] = {'installed': name}
+        elif __opts__["test"]:
+            ret["result"] = None
+            ret[
+                "comment"
+            ] = "Program '{}' would have been installed for user '{}' in '{}'.".format(
+                name, user, root
+            )
+            ret["changes"] = {"installed": name}
         elif __salt__["cargo.install"](name, locked=locked, root=root, user=user):
-            ret["comment"] = "Program '{}' was installed for user '{}' in '{}'.".format(name, user, root)
-            ret["changes"] = {'installed': name}
+            ret["comment"] = "Program '{}' was installed for user '{}' in '{}'.".format(
+                name, user, root
+            )
+            ret["changes"] = {"installed": name}
         else:
             ret["result"] = False
             ret["comment"] = "Something went wrong while calling cargo."
@@ -154,12 +178,6 @@ def latest(name, locked=True, root=None, user=None):
 def absent(name, root=None, user=None):
     """
     Makes sure cargo installation of program is absent.
-
-    CLI Example:
-
-    .. code-block:: bash
-
-        salt '*' cargo.absent broot user=user
 
     name
         The name of the program to remove, if installed.
@@ -177,13 +195,19 @@ def absent(name, root=None, user=None):
     try:
         if not __salt__["cargo.is_installed"](name, root, user):
             ret["comment"] = "Program is already absent from cargo."
-        elif __opts__['test']:
-            ret['result'] = None
-            ret['comment'] = "Program '{}' in '{}' would have been removed for user '{}'.".format(name, root, user)
-            ret["changes"] = {'installed': name}
+        elif __opts__["test"]:
+            ret["result"] = None
+            ret[
+                "comment"
+            ] = "Program '{}' in '{}' would have been removed for user '{}'.".format(
+                name, root, user
+            )
+            ret["changes"] = {"installed": name}
         elif __salt__["cargo.remove"](name, root, user):
-            ret["comment"] = "Program '{}' in '{}' was removed for user '{}'.".format(name, root, user)
-            ret["changes"] = {'installed': name}
+            ret["comment"] = "Program '{}' in '{}' was removed for user '{}'.".format(
+                name, root, user
+            )
+            ret["changes"] = {"installed": name}
         else:
             ret["result"] = False
             ret["comment"] = "Something went wrong while calling cargo."
