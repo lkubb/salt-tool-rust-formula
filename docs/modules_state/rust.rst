@@ -1,7 +1,7 @@
 .. _sm_rust:
 
-cargo state module
-==================
+``cargo`` state module
+======================
 
 .. automodule:: _states.cargo
    :members:

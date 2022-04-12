@@ -9,7 +9,7 @@ include:
   - {{ tplroot }}.package
 
 
-{%- for user in rust.users | rejectattr('xdg', 'sameas', False) %}
+{%- for user in rust.users | rejectattr('xdg', 'sameas', false) %}
 
 {%-   set user_default_conf = user.home | path_join(rust.lookup.paths.confdir) %}
 {%-   set user_xdg_datadir = user.xdg.data | path_join(rust.lookup.paths.xdg_dirname) %}

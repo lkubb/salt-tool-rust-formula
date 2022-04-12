@@ -8,6 +8,7 @@
 # @FIXME install rustup-init platform-independently or official
 # packages from https://forge.rust-lang.org/infra/other-installation-methods.html#standalone-installers
 
+
 Rustup-init is installed:
   pkg.installed:
     - name: {{ rust.lookup.pkg.name }}

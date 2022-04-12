@@ -9,6 +9,7 @@
 include:
   - {{ sls_config_clean }}
 
+
 Rust is removed:
   pkg.removed:
     - name: {{ rust.lookup.pkg.name }}

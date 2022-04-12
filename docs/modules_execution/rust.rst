@@ -1,7 +1,7 @@
 .. _em_rust:
 
-cargo execution module
-======================
+``cargo`` execution module
+==========================
 
 .. automodule:: _modules.cargo
    :members:
