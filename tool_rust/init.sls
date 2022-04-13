@@ -4,5 +4,6 @@
 include:
   - .package
   - .xdg
+  - .env_vars
   - .config
   - .crates

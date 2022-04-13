@@ -2,6 +2,7 @@
 # Leap-15
 ---
 values:
+  install_method: web
   users:
     user:
       completions: .completions
@@ -22,13 +23,18 @@ values:
     master: template-master
     winner: lookup
     pkg:
-      name: rustup-init
+      name: rustup
     paths:
       confdir: '.cargo'
       conffile: 'config.toml'
       xdg_dirname: 'cargo'
       xdg_conffile: 'config.toml'
     rootgroup: root
+    require_asdf: tool_asdf
+    rustup_init:
+      hash: a3cb081f88a6789d104518b30d4aa410009cd08c3822a1226991d6cf0442a0f8
+      name: rustup-init.sh
+      source: https://sh.rustup.rs
   map_jinja:
     sources:
     - "Y:G@osarch"

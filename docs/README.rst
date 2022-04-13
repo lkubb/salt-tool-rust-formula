@@ -5,10 +5,6 @@ Rust Formula
 
 Manages Rust toolchain in the user environment.
 
-**Warning: This formula is currently broken.** Do not use it to manage the Rust toolchain. To fix it, it would be necessary to either make it install ``rustup`` or a specific package from the `standalone installers <https://forge.rust-lang.org/infra/other-installation-methods.html#standalone-installers>`_.
-
-On the other hand, the ``cargo`` **modules are functional** and those are what this repository exists for currently.
-
 .. contents:: **Table of Contents**
    :depth: 1
 
@@ -18,7 +14,7 @@ Applying ``tool_rust`` will make sure ``rust`` is configured as specified.
 
 Execution and state module
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-This formula provides a custom execution module and state to manage packages installed with Rust. The functions are self-explanatory, please see the source code or the rendered docs at :ref:`em_rust` and :ref:`sm_rust`.
+This formula provides a custom execution module and state to manage packages installed with ``cargo``. The functions are self-explanatory, please see the source code or the rendered docs at :ref:`em_cargo` and :ref:`sm_cargo`.
 
 Configuration
 -------------
@@ -84,6 +80,10 @@ Formula-specific
       # by leaving version empty or setting it to 'latest'
       # (again for Linux, brew does that anyways).
     version: latest
+
+      # Which method to use to install `rustup`. Currently available:
+      # web, asdf, system (`pkg.installed`)
+    install_method: web
 
       # Default formula configuration for all users.
     defaults:
@@ -182,3 +182,7 @@ Runs all of the stages above in one go: i.e. ``destroy`` + ``converge`` + ``veri
 ^^^^^^^^^^^^^^^^^^^^^
 
 Gives you SSH access to the instance for manual testing.
+
+Todo
+----
+* allow installation with specific `standalone installers <https://forge.rust-lang.org/infra/other-installation-methods.html#standalone-installers>`_

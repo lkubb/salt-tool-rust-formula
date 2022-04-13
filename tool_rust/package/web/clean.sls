@@ -8,25 +8,26 @@
 
 include:
   - {{ sls_config_clean }}
-{%- if salt['state.sls_exists'](sls_actual_install) %}
-  - {{ sls_actual_install }}.clean
 
-{%- else %}
-
-{%-   for user in rust.users %}
+{%- for user in rust.users %}
 
 Rust toolchain is removed for user '{{ user.name }}':
   cmd.run:
     - name: rustup toolchain uninstall '{{ rust.version or 'stable' }}'
     - runas: {{ user.name }}
+{%-   if user._rust.env %}
+    - env:
+{%-     for var, val in user._rust.env.items() %}
+        {{ var }}: {{ val }}
+{%-     endfor %}
+{%-   endif %}
     - onlyif:
       - test -z '{{ rust.version }}' || sudo -u {{ user.name }} rustup toolchain list | grep '{{ rust.version }}'
     - require_in:
       - Rustup is removed
-{%-   endfor %}
 
-Rustup is removed:
-  pkg.removed:
-    - pkg: {{ rust.lookup.pkg.name }}
-
-{%- endif %}
+# @TODO check if this is correct
+Rustup is removed for user '{{ user.name }}':
+  file.absent:
+    - name: {{ user._rust.rustup_datadir }}
+{%- endfor %}

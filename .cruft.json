@@ -18,7 +18,7 @@
       "name": "Rust",
       "abbr": "rust",
       "abbr_pysafe": "rust",
-      "pkg": "rustup-init",
+      "pkg": "rustup",
       "modstate": "y",
       "needs_repo": "n",
       "has_service": "n",
@@ -37,8 +37,17 @@
       "has_completions": "n",
       "has_tests": "y",
       "git_username": "lkubb",
-      "_lookup": {},
-      "_settings": {},
+      "_lookup": {
+        "require_asdf": "tool_asdf",
+        "rustup_init": {
+          "hash": "a3cb081f88a6789d104518b30d4aa410009cd08c3822a1226991d6cf0442a0f8",
+          "name": "rustup-init.sh",
+          "source": "https://sh.rustup.rs"
+        }
+      },
+      "_settings": {
+        "install_method": "web"
+      },
       "_usersettings": {
         "crates": [
           "broot",

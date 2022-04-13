@@ -4,4 +4,5 @@
 include:
   - .crates.clean
   - .config.clean
+  - .env_vars.clean
   - .package.clean

@@ -6,6 +6,6 @@ portage:
 tool_rust:
   lookup:
     pkg:
-      name: rustup-init
+      name: rustup
     service:
-      name: rustup-init
+      name: rustup

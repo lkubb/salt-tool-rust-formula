@@ -12,7 +12,19 @@ values:
       conffile: 'config.toml'
       xdg_dirname: 'cargo'
       xdg_conffile: 'config.toml'
+      rustup_confdir: '.rustup'
+      rustup_conffile: 'settings.toml'
+      rustup_xdg_dirname: 'rustup'
+      rustup_xdg_conffile: 'settings.toml'
+    require_asdf: tool_asdf
+    rustup_init:
+      # v1.24.3
+      hash: a3cb081f88a6789d104518b30d4aa410009cd08c3822a1226991d6cf0442a0f8
+      name: rustup-init.sh
+      source: https://sh.rustup.rs
     rootgroup: root
+  install_method: web
+  version: latest
   # Just here for testing
   added_in_defaults: defaults_value
   winner: defaults

@@ -21,12 +21,18 @@ tool_rust:
     added_in_lookup: lookup_value
 
     pkg:
-      name: rustup-init
+      name: rustup
     paths:
       confdir: '.cargo'
       conffile: 'config.toml'
       xdg_dirname: 'cargo'
       xdg_conffile: 'config.toml'
+    require_asdf: tool_asdf
+    rustup_init:
+      hash: a3cb081f88a6789d104518b30d4aa410009cd08c3822a1226991d6cf0442a0f8
+      name: rustup-init.sh
+      source: https://sh.rustup.rs
+  install_method: web
 
   tofs:
     # The files_switch key serves as a selector for alternative

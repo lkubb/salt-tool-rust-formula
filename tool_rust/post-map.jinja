@@ -45,12 +45,24 @@ state: {{ salt['cmd.run']('[ -n "$XDG_STATE_HOME" ] && echo "${XDG_STATE_HOME}" 
         'confdir': xdg.data | path_join(mapdata.lookup.paths.xdg_dirname),
         'conffile': xdg.data | path_join(mapdata.lookup.paths.xdg_dirname, mapdata.lookup.paths.xdg_conffile),
         'datadir': xdg.data | path_join(mapdata.lookup.paths.xdg_dirname),
+        'rustup_datadir': xdg.data | path_join(mapdata.lookup.paths.rustup_xdg_dirname),
+        'env': {
+          'CARGO_HOME': '${XDG_DATA_HOME:-$HOME/.local/share}/' ~ mapdata.lookup.paths.xdg_dirname,
+          'CARGO_INSTALL_ROOT': '$HOME/.local',
+        }
     }) -%}
+    {%- if 'web' == mapdata.install_method %}
+      {%- do users[user]['_rust'].env.update({
+            'RUSTUP_HOME': '${XDG_DATA_HOME:-$HOME/.local/share}/' ~ mapdata.lookup.paths.rustup_xdg_dirname,
+      }) -%}
+    {%- endif %}
   {%- else -%}
     {%- do users[user]['_rust'].update({
         'confdir': users[user].home | path_join(mapdata.lookup.paths.confdir),
         'conffile': users[user].home | path_join(mapdata.lookup.paths.confdir, mapdata.lookup.paths.conffile),
         'datadir': users[user].home | path_join(mapdata.lookup.paths.confdir),
+        'rustup_datadir': users[user].home | path_join(mapdata.lookup.paths.rustup_confdir),
+        'env': {}
     }) -%}
   {%- endif -%}
 {%- endfor -%}
