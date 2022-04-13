@@ -24,7 +24,7 @@ def installed(
     locked=True,
     root=None,
     force=False,
-    git=None,
+    git=False,
     path=None,
     branch=None,
     tag=None,
@@ -36,12 +36,13 @@ def installed(
 
     name
         The name of the program to install, if not already installed.
+        For git sources, this is the repository URI, e.g. https://github.com/starship/starship
 
     version:
         If you want to install a specific version and are installing from
         crates.io (default), specify here. Currently, the program will
         NOT be reinstalled with the specified version if it is already
-        found. @TODO latest or None for latest
+        found. 'latest' or None for latest version.
 
     locked:
         Use the package's lockfile when pulling dependencies. Defaults to True.
@@ -54,7 +55,7 @@ def installed(
         Force installation, even if the package is up to date.
 
     git:
-        Install from a git repository, e.g. https://github.com/starship/starship
+        Whether the name indicates a git repo URI. Defaults to False.
 
     path:
         Install from a local filesystem path.
@@ -70,12 +71,14 @@ def installed(
 
     user
         The username to install the program for. Defaults to salt user.
-
     """
+
     ret = {"name": name, "result": True, "comment": "", "changes": {}}
 
     if version == "latest":
         version = None
+
+    git = name if git else None
 
     try:
         if __salt__["cargo.is_installed"](name, root, user):
@@ -108,7 +111,8 @@ def installed(
 def latest(name, locked=True, root=None, user=None):
     """
     Makes sure program is installed with cargo and is up to date. This works
-    for installation from crates.io. For git/path sources, use installed(force=True)
+    for installation from crates.io. For git/path sources, use installed(force=True).
+    @TODO: check git repositories for updates?
 
     name
         The name of the program to upgrade.
@@ -122,12 +126,12 @@ def latest(name, locked=True, root=None, user=None):
 
     user
         The username to upgrade the program for. Defaults to salt user.
-
     """
+
     ret = {"name": name, "result": True, "comment": "", "changes": {}}
 
     try:
-        if __salt__["cargo.is_installed"](name, root, user):
+        if __salt__["cargo.is_installed"](name, root, user, allow_git=False):
             if __salt["cargo.is_latest"](name, root, user):
                 ret[
                     "comment"
@@ -188,7 +192,6 @@ def absent(name, root=None, user=None):
 
     user
         The username to uninstall the program for. Defaults to salt user.
-
     """
     ret = {"name": name, "result": True, "comment": "", "changes": {}}
 

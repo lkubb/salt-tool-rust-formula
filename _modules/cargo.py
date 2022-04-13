@@ -6,6 +6,7 @@ Manage
 """
 
 import re
+from urllib.parse import parse_qs, urlparse
 
 import salt.utils.platform
 from salt.exceptions import CommandExecutionError
@@ -37,7 +38,7 @@ def _which(user=None):
     raise CommandExecutionError("Could not find cargo executable.")
 
 
-def is_installed(name, root=None, user=None):
+def is_installed(name, root=None, user=None, allow_git=True):
     """
     Checks whether a program with this name is installed by cargo.
 
@@ -58,8 +59,28 @@ def is_installed(name, root=None, user=None):
     user
         The username to check for. Defaults to salt user.
 
+    allow_git
+        Whether to check for git sources as names as well.
+        This does not differentiate between branches/revs/tags.
+        Defaults to True.
     """
-    return name in _list_installed(root, user=user)
+
+    installed = list_installed(root, user=user)
+
+    if name in installed:
+        return True
+
+    if not allow_git:
+        return False
+
+    parsed = urlparse(name)
+
+    if parsed.netloc and parsed.path:
+        repo = parsed.netloc + parsed.path
+
+        return bool([x for x in installed if installed[x]["repo"] == repo])
+
+    return False
 
 
 def is_latest(name, root=None, user=None):
@@ -82,14 +103,22 @@ def is_latest(name, root=None, user=None):
 
     user
         The username to check for. Defaults to salt user.
-
     """
-    if not is_installed(name, root, user):
+
+    installed = list_installed(root, user)
+
+    if name not in installed:
         raise CommandExecutionError(
             "{} is not installed with cargo for user {}.".format(name, user)
         )
+    elif installed[name]["git"]:
+        raise CommandExecutionError(
+            "{} is not sourced from crates.io for user {}. Version checking is currently not implemented for this scenario.".format(
+                name, user
+            )
+        )
 
-    return latest_version(name, user) == _list_installed(root, True, user)[name]
+    return latest_version(name, user) == installed[name]["version"]
 
 
 def latest_version(name, user=None):
@@ -107,8 +136,8 @@ def latest_version(name, user=None):
 
     user
         The username to check for. Defaults to salt user.
-
     """
+
     e = _which(user)
 
     out = __salt__["cmd.run_stdout"]("{} search {}".format(e, name), runas=user)
@@ -140,7 +169,9 @@ def install(
         salt '*' cargo.install flavours user=user
 
     name
-        The name of the program to install.
+        The name of the program to install. Irrelevant when using git.
+        For git, the effective package name is defined in ``Cargo.toml`` under ``[package]``.
+        You will need to use it for other operations.
 
     version:
         If you want to install a specific version and are installing from
@@ -173,10 +204,11 @@ def install(
 
     user
         The username to install the program for. Defaults to salt user.
-
     """
+
     e = _which(user)
     flags = []
+
     if locked:
         flags.append("--locked")
     if root:
@@ -191,11 +223,15 @@ def install(
             flags.append("--tag=" + tag)
         elif rev:
             flags.append("--rev=" + rev)
-        # name = ''
     if path:
         flags.append("--path=" + path)
     if not git and not path and version:
         flags.append("--vers=" + version)
+
+    if git:
+        return not __salt__["cmd.retcode"](
+            "{} install {}".format(e, name, " ".join(flags)), runas=user
+        )
 
     # cmd.retcode returns shell-style: 0 for success, >0 for failure
     return not __salt__["cmd.retcode"](
@@ -222,9 +258,9 @@ def remove(name, root=None, user=None):
 
     user
         The username to uninstall the program for. Defaults to salt user.
-
     """
-    if not is_installed(name, root, user):
+
+    if not is_installed(name, root, user, allow_git=False):
         raise CommandExecutionError(
             "{} is not installed with cargo for user {}.".format(name, user)
         )
@@ -265,9 +301,9 @@ def upgrade(name, locked=True, root=None, user=None):
 
     user
         The username to upgrade the program for. Defaults to salt user.
-
     """
-    if not is_installed(name, root, user):
+
+    if not is_installed(name, root, user, allow_git=False):
         raise CommandExecutionError(
             "{} is not installed with cargo for user {}.".format(name, user)
         )
@@ -305,8 +341,8 @@ def reinstall(name, locked=True, root=None, user=None):
 
     user
         The username to reinstall the program for. Defaults to salt user.
-
     """
+
     if not is_installed(name, root, user):
         raise CommandExecutionError(
             "{} is not installed with cargo for user {}.".format(name, user)
@@ -315,7 +351,46 @@ def reinstall(name, locked=True, root=None, user=None):
     return install(name, locked, root, force=True, user=user)
 
 
-def _list_installed(root=None, versions=False, user=None):
+def list_installed(root=None, user=None):
+    """
+    Returns a dictionary of installed crates.
+
+    Example output:
+
+    .. code-block:: yaml
+
+        rbw:
+            branch: ''
+            commit: ''
+            git: False
+            repo: ''
+            rev: ''
+            source: crates.io/crates/rbw
+            version: 0.5.2
+        starship:
+            branch: release-please
+            commit: ebb86367
+            git: True
+            repo: github.com/starship/starship
+            rev: ''
+            source: https://github.com/starship/starship?branch=release-please#ebb86367
+            version: 1.5.4
+
+    CLI Example:
+
+    .. code-block:: bash
+
+        salt '*' cargo.list_installed user=user
+
+    root:
+        Use this path as root folder for the listing. If you installed it
+        somewhere else, the check will fail. Defaults to cargo's default
+        ($CARGO_INSTALL_ROOT > install.root config val > $CARGO_HOME > $HOME/.cargo)
+
+    user
+        The username to list for. Defaults to salt user.
+    """
+
     e = _which(user)
 
     out = __salt__["cmd.run_stdout"](
@@ -323,15 +398,39 @@ def _list_installed(root=None, versions=False, user=None):
     )
 
     if out:
-        return _parse(out, versions)
-    if versions:
-        return {}
-    return []
+        return _parse(out)
+    return {}
 
 
-def _parse(installed, versions=False):
-    res = re.findall(r"(?m)^[^\s]..*:$", installed)
+def _parse(installed):
+    res = re.findall(r"(?m)^([^\s]+)\ v([\d\.]+)(?:\ \((.*)\))?:$", installed)
+    ret = {}
 
-    if versions:
-        return {x.split(" ")[0]: x.split(" ")[1][1:-1] for x in res}
-    return [x.split(" ")[0] for x in res]
+    for name, version, source in res:
+        branch = commit = rev = repo = ""
+        git = False
+
+        # This works for Github specifically, not sure
+        # about other sources. @TODO
+        if source:
+            parsed = urlparse(source)
+            commit = parsed.fragment
+            parsed_q = parse_qs(parsed.query)
+            repo = parsed.netloc + parsed.path
+            rev = parsed_q.get("rev", [""])[0]
+            branch = parsed_q.get("branch", [""])[0]
+            git = True
+        else:
+            source = "crates.io/crates/" + name
+
+        ret[name] = {
+            "branch": branch,
+            "commit": commit,
+            "git": git,
+            "rev": rev,
+            "repo": repo,
+            "source": source,
+            "version": version,
+        }
+
+    return ret
