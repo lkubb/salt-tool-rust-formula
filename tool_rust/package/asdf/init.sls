@@ -5,10 +5,10 @@
 {%- set tplroot = tpldir.split('/')[0] %}
 {%- from tplroot ~ "/map.jinja" import mapdata as rust with context %}
 
-{%- if rust.require_asdf %}
+{%- if rust.lookup.require_asdf %}
 
 include:
-  - {{ rust.require_asdf }}
+  - {{ rust.lookup.require_asdf }}
 {%- endif %}
 
 
@@ -21,8 +21,9 @@ Rust is installed for user '{{ user.name }}':
     - user: {{ user.name }}
     - require_in:
       - Rust setup is completed
-{%-   if rust.require_asdf %}
+{%-   if rust.lookup.require_asdf %}
     - require:
-      - sls: {{ rust.require_asdf }}
+      # cannot require files that do not have states themselves
+      - sls: {{ rust.lookup.require_asdf }}.package.install
 {%-   endif %}
 {%- endfor %}
