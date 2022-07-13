@@ -26,8 +26,8 @@ Rust toolchain is removed for user '{{ user.name }}':
     - require_in:
       - Rustup is removed
 
-# @TODO check if this is correct
 Rustup is removed for user '{{ user.name }}':
-  file.absent:
-    - name: {{ user._rust.rustup_datadir }}
+  cmd.run:
+    - name: rustup self uninstall
+    - runas: {{ user.name }}
 {%- endfor %}

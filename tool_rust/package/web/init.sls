@@ -18,7 +18,7 @@ Rustup-init is available:
 
 Rustup is installed for user '{{ user.name }}':
   cmd.run:
-    - name: {{ tmp | path_join(rust.lookup.rustup_init.name) }}
+    - name: {{ tmp | path_join(rust.lookup.rustup_init.name) }} -y
     - runas: {{ user.name }}
 {%-   if user._rust.env %}
     - env:
