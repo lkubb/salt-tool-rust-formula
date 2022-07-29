@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+# vim: ft=sls
+
 # @ TODO
 # Standalone Installers
 # https://forge.rust-lang.org/infra/other-installation-methods.html#standalone-installers
