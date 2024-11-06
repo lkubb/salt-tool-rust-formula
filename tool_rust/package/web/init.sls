@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
 
-{%- set tplroot = tpldir.split('/')[0] %}
+{%- set tplroot = tpldir.split("/")[0] %}
 {%- from tplroot ~ "/map.jinja" import mapdata as rust with context %}
-{%- set tmp = salt['temp.dir']() %}
+{%- set tmp = salt["temp.dir"]() %}
 
 
 Rustup-init is available:
@@ -34,7 +33,7 @@ Rustup is installed for user '{{ user.name }}':
 
 Rust toolchain is installed for user '{{ user.name }}':
   cmd.run:
-    - name: rustup toolchain install '{{ rust.version or 'stable' }}'
+    - name: rustup toolchain install '{{ rust.version or "stable" }}'
     - runas: {{ user.name }}
 {%-   if user._rust.env %}
     - env:
@@ -43,7 +42,7 @@ Rust toolchain is installed for user '{{ user.name }}':
 {%-     endfor %}
 {%-   endif %}
     - unless:
-      - sudo -u {{ user.name }} rustup toolchain list | grep '{{ rust.version or 'alwaysfails' }}'
+      - sudo -u {{ user.name }} rustup toolchain list | grep '{{ rust.version or "alwaysfails" }}'
     - require:
       - Rustup is installed for user '{{ user.name }}'
     - require_in:

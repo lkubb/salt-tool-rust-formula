@@ -1,7 +1,10 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
 
-{%- set tplroot = tpldir.split('/')[0] %}
+{#-
+    Removes the configuration of the Rust package.
+#}
+
+{%- set tplroot = tpldir.split("/")[0] %}
 {%- from tplroot ~ "/map.jinja" import mapdata as rust with context %}
 
 
@@ -9,5 +12,5 @@
 
 Rust data dir is absent for user '{{ user.name }}':
   file.absent:
-    - name: {{ user['_rust'].datadir }}
+    - name: {{ user["_rust"].datadir }}
 {%- endfor %}

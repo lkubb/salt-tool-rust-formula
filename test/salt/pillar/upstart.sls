@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 # vim: ft=yaml
+# yamllint disable rule:comments-indentation
 ---
 tool_global:
   users:
@@ -27,6 +27,7 @@ tool_rust:
       conffile: 'config.toml'
       xdg_dirname: 'cargo'
       xdg_conffile: 'config.toml'
+    rootgroup: root
     require_asdf: tool_asdf
     rustup_init:
       hash: a3cb081f88a6789d104518b30d4aa410009cd08c3822a1226991d6cf0442a0f8

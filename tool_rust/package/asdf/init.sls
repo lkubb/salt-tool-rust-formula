@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
 
-{%- set tplroot = tpldir.split('/')[0] %}
+{%- set tplroot = tpldir.split("/")[0] %}
 {%- from tplroot ~ "/map.jinja" import mapdata as rust with context %}
 
 {%- if rust.lookup.require_asdf %}
@@ -16,7 +15,7 @@ include:
 Rust is installed for user '{{ user.name }}':
   asdf.version_installed:
     - name: rust
-    - version: {{ rust.version or 'latest' }}
+    - version: {{ rust.version or "latest" }}
     - user: {{ user.name }}
     - require_in:
       - Rust setup is completed

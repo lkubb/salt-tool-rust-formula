@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
 
-{%- set tplroot = tpldir.split('/')[0] %}
+{%- set tplroot = tpldir.split("/")[0] %}
 {%- from tplroot ~ "/map.jinja" import mapdata as rust with context %}
 
 include:
@@ -9,7 +8,7 @@ include:
   - {{ tplroot }}.env_vars
 
 
-{%- for user in rust.users | rejectattr('xdg', 'sameas', false) %}
+{%- for user in rust.users | rejectattr("xdg", "sameas", false) %}
 
 {%-   set user_default_conf = user.home | path_join(rust.lookup.paths.confdir) %}
 {%-   set user_xdg_datadir = user.xdg.data | path_join(rust.lookup.paths.xdg_dirname) %}
@@ -26,7 +25,7 @@ XDG_DATA_HOME exists for Rust for user '{{ user.name }}':
     - makedirs: true
     - onlyif:
       - test -e '{{ user_default_conf }}'
-{%-   if 'web' == rust.install_method %}
+{%-   if rust.install_method == "web" %}
       - test -e '{{ user_rustup_default_conf }}'
 {%-   endif %}
 
@@ -35,7 +34,7 @@ Existing Rust data is migrated for user '{{ user.name }}':
     - names:
       - {{ user_xdg_datadir }}:
         - source: {{ user_default_conf }}
-{%-   if 'web' == rust.install_method %}
+{%-   if rust.install_method == "web" %}
       - {{ user_rustup_xdg_datadir }}:
         - source: {{ user_rustup_default_conf }}
 {%-   endif %}
@@ -48,7 +47,7 @@ Rust has its data dir in XDG_DATA_HOME for user '{{ user.name }}':
   file.directory:
     - names:
       - {{ user_xdg_datadir }}
-{%-   if 'web' == rust.install_method %}
+{%-   if rust.install_method == "web" %}
       - {{ user_rustup_xdg_datadir }}
 {%-   endif %}
     - user: {{ user.name }}
@@ -70,7 +69,7 @@ Rust uses XDG dirs during this salt run:
         CARGO_HOME: "{{ user_xdg_datadir }}"
         # installs binaries into ~/.local/bin
         CARGO_INSTALL_ROOT: "{{ user.home | path_join('.local') }}"
-{%-   if 'web' == rust.install_method %}
+{%-   if rust.install_method == "web" %}
         RUSTUP_HOME: "{{ user_rustup_xdg_datadir }}"
 {%-   endif %}
     - require_in:

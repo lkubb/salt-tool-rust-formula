@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
 
-{%- set tplroot = tpldir.split('/')[0] %}
+{%- set tplroot = tpldir.split("/")[0] %}
 {%- from tplroot ~ "/map.jinja" import mapdata as rust with context %}
 
 include:
@@ -9,9 +8,9 @@ include:
 
 
 {%- for user in rust.users
-    | selectattr('persistenv', 'defined')
-    | selectattr('persistenv')
-    | selectattr('_rust.env') %}
+    | selectattr("persistenv", "defined")
+    | selectattr("persistenv")
+    | selectattr("_rust.env") %}
 
 persistenv file for Rust for user '{{ user.name }}' exists:
   file.managed:

@@ -1,9 +1,18 @@
 diff a/tool_rust/package/install.sls b/tool_rust/package/install.sls	(rejected hunks)
-@@ -1,7 +1,6 @@
- # -*- coding: utf-8 -*-
+@@ -1,14 +1,13 @@
+-# -*- coding: utf-8 -*-
  # vim: ft=sls
  
--{#- Get the `tplroot` from `tpldir` #}
- {%- set tplroot = tpldir.split('/')[0] %}
+-{%- set tplroot = tpldir.split('/')[0] %}
++{%- set tplroot = tpldir.split("/")[0] %}
  {%- from tplroot ~ "/map.jinja" import mapdata as rust with context %}
  
+ 
+ Rust is installed:
+   pkg.installed:
+     - name: {{ rust.lookup.pkg.name }}
+-    - version: {{ rust.get('version') or 'latest' }}
++    - version: {{ rust.get("version") or "latest" }}
+     {#- do not specify alternative return value to be able to unset default version #}
+ 
+ Rust setup is completed:

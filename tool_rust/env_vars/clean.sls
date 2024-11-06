@@ -1,14 +1,13 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
 
-{%- set tplroot = tpldir.split('/')[0] %}
+{%- set tplroot = tpldir.split("/")[0] %}
 {%- from tplroot ~ "/map.jinja" import mapdata as rust with context %}
 
 
 {%- for user in rust.users
-    | selectattr('persistenv', 'defined')
-    | selectattr('persistenv')
-    | selectattr('_rust.env') %}
+    | selectattr("persistenv", "defined")
+    | selectattr("persistenv")
+    | selectattr("_rust.env") %}
 {%-   for conf, val in user._rust.env %}
 
 Rust env var '{{ conf | upper }}' is not persisted for '{{ user.name }}':
