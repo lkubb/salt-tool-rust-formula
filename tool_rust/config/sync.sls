@@ -8,7 +8,7 @@
 
 {%- set tplroot = tpldir.split("/")[0] %}
 {%- from tplroot ~ "/map.jinja" import mapdata as rust with context %}
-{%- from tplroot ~ "/libtofs.jinja" import files_switch %}
+{%- from tplroot ~ "/libtofsstack.jinja" import files_switch %}
 
 
 {%- for user in rust.users | selectattr("dotconfig", "defined") | selectattr("dotconfig") %}
@@ -18,10 +18,14 @@ Rust configuration is synced for user '{{ user.name }}':
   file.recurse:
     - name: {{ user["_rust"].confdir }}
     - source: {{ files_switch(
-                ["cargo"],
-                default_files_switch=["id", "os_family"],
-                override_root="dotconfig",
-                opt_prefixes=[user.name]) }}
+                    ["cargo"],
+                    lookup="Rust configuration is synced for user '{}'".format(user.name),
+                    config=rust,
+                    path_prefix="dotconfig",
+                    files_dir="",
+                    custom_data={"users": [user.name]},
+                 )
+              }}
     - context:
         user: {{ user | json }}
     - template: jinja

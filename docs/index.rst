@@ -1,5 +1,5 @@
-Welcome to salt-tool-rust-formula's documentation!
-==================================================
+Welcome to tool-rust-formula's documentation!
+=============================================
 
 .. toctree::
    :maxdepth: 2

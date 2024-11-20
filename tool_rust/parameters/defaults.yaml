@@ -24,7 +24,14 @@ values:
     rootgroup: root
   install_method: web
   version: latest
-  # Just here for testing
-  added_in_defaults: defaults_value
-  winner: defaults
+
+  tofs:
+    files_switch:
+      - G@id|U@users
+      - id
+      - C@roles|U@users
+      - roles
+      - G@os_family|U@users
+      - os_family
+      - U@users
 ...
