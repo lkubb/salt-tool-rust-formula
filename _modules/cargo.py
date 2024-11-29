@@ -230,9 +230,8 @@ def install(
 
     if git:
         return not __salt__["cmd.retcode"](
-            "{} install {}".format(e, name, " ".join(flags)), runas=user
+            "{} install {}".format(e, " ".join(flags)), runas=user
         )
-
     # cmd.retcode returns shell-style: 0 for success, >0 for failure
     return not __salt__["cmd.retcode"](
         "{} install '{}' {}".format(e, name, " ".join(flags)), runas=user
